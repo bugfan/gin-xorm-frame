@@ -37,12 +37,12 @@ type ModelUpdate interface {
 type ScaffoldRouteType int
 
 const (
-	ScaffoldRouteTypeNew = 1 << iota
-	ScaffoldRouteTypeList
-	ScaffoldRouteTypeGet
-	ScaffoldRouteTypeUpdate
-	ScaffoldRouteTypePatch
-	ScaffoldRouteTypeDelete
+	ScaffoldRouteTypeNew    = 1 << iota
+	ScaffoldRouteTypeList   // get query all
+	ScaffoldRouteTypeGet    // get query one
+	ScaffoldRouteTypeUpdate // put
+	ScaffoldRouteTypePatch  // patch
+	ScaffoldRouteTypeDelete // delete
 	// disable path by default
 	ScaffoldRouteTypeALL = ScaffoldRouteTypeNew | ScaffoldRouteTypeList | ScaffoldRouteTypeGet | ScaffoldRouteTypeUpdate | ScaffoldRouteTypeDelete
 	// ScaffoldRouteTypeALL = ScaffoldRouteTypeNew | ScaffoldRouteTypeList | ScaffoldRouteTypeGet | ScaffoldRouteTypeUpdate | ScaffoldRouteTypePatch | ScaffoldRouteTypeDelete

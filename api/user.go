@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"scaffold/model"
+	"gin-xorm-frame/model"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-xorm/xorm"
@@ -23,16 +23,24 @@ type userContent struct {
 	ID       int64
 	Username string
 	Password string
+	Explain  string
 	Created  time.Time
 	Updated  time.Time
 }
 
 func (c *userContent) Check(ctx *gin.Context, scfd *Scaffold, t ScaffoldRouteType) bool {
-	println("sss:", t)
 	if t == ScaffoldRouteTypeNew || t == ScaffoldRouteTypeUpdate {
 		if len(c.Username) == 0 {
 			ctx.AbortWithError(http.StatusBadRequest, errors.New("用户名不能为空"))
 			return false
+		}
+		if t == ScaffoldRouteTypeNew {
+			obj := &model.User{Username: c.Username}
+			has, _ := model.GetEngine().Where("username = ?", c.Username).Exist(obj)
+			if has {
+				ctx.AbortWithError(http.StatusBadRequest, errors.New("此名称已经存在"))
+				return false
+			}
 		}
 	}
 	return true

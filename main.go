@@ -1,10 +1,10 @@
 package main
 
 import (
+	"gin-xorm-frame/api"
+	"gin-xorm-frame/model"
+	"gin-xorm-frame/setting"
 	"os"
-	"scaffold/api"
-	"scaffold/model"
-	"scaffold/setting"
 
 	"github.com/gogap/logrus"
 )
@@ -26,5 +26,11 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	api.G.Run(":9999")
+	if setting.Get("ishttps") == "true" {
+		pem := setting.Get("ssl_pem")
+		key := setting.Get("ssl_key")
+		api.G.RunTLS(setting.Get("server_addr")+":"+setting.Get("server_port"), pem, key)
+	} else {
+		api.G.Run(setting.Get("server_addr") + ":" + setting.Get("server_port"))
+	}
 }

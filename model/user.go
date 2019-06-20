@@ -13,3 +13,10 @@ type User struct {
 	Created  time.Time
 	Updated  time.Time
 }
+
+func (u *User) Explain() string {
+	if u.ID > 3 {
+		return "add_extend_column > 3"
+	}
+	return "add_extend_column"
+}
