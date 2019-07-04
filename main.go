@@ -2,7 +2,7 @@ package main
 
 import (
 	"gin-xorm-frame/api"
-	"gin-xorm-frame/model"
+	"gin-xorm-frame/models"
 	"gin-xorm-frame/setting"
 	"os"
 
@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	_, err := model.SetEngine(&model.Config{
+	_, err := models.SetEngine(&models.Config{
 		User:     setting.Get("db_user"),
 		Password: setting.Get("db_password"),
 		Host:     setting.Get("db_host"),
@@ -22,7 +22,7 @@ func main() {
 		os.Exit(-1)
 	}
 
-	api, err := api.NewAPIBackend(model.GetEngine())
+	api, err := api.NewAPIBackend(models.GetEngine())
 	if err != nil {
 		logrus.Fatal(err)
 	}

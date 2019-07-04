@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"gin-xorm-frame/model"
+	"gin-xorm-frame/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-xorm/xorm"
@@ -35,8 +35,8 @@ func (c *userContent) Check(ctx *gin.Context, scfd *Scaffold, t ScaffoldRouteTyp
 			return false
 		}
 		if t == ScaffoldRouteTypeNew {
-			obj := &model.User{Username: c.Username}
-			has, _ := model.GetEngine().Where("username = ?", c.Username).Exist(obj)
+			obj := &models.User{Username: c.Username}
+			has, _ := models.GetEngine().Where("username = ?", c.Username).Exist(obj)
 			if has {
 				ctx.AbortWithError(http.StatusBadRequest, errors.New("此名称已经存在"))
 				return false
@@ -48,7 +48,7 @@ func (c *userContent) Check(ctx *gin.Context, scfd *Scaffold, t ScaffoldRouteTyp
 
 func (c *userController) Register(g *gin.RouterGroup) {
 	route := g.Group("/user")
-	scraffold := NewScaffold(c.X, new(model.User), new(userContent), ScaffoldRouteTypeALL)
+	scraffold := NewScaffold(c.X, new(models.User), new(userContent), ScaffoldRouteTypeALL)
 	scraffold.HiddenField = []string{"Password"}
 	scraffold.Register(route)
 
