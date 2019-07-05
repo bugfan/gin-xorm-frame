@@ -18,6 +18,7 @@ func init() {
 		"db_host":     "127.0.0.1:3306",
 		"db_name":     "scaffold",
 		"db_log":      "xorm.log",
+		"mongo_url":   "127.0.0.1",
 		"server_port": "9997",
 		"server_addr": "0.0.0.0",
 		"ssl_key":     "./ssl.key",
