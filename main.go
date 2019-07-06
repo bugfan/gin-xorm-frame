@@ -2,7 +2,6 @@ package main
 
 import (
 	"gin-xorm-frame/api"
-	"gin-xorm-frame/mgomodels"
 	"gin-xorm-frame/models"
 	"gin-xorm-frame/setting"
 	"os"
@@ -24,13 +23,13 @@ func main() {
 		os.Exit(-1)
 	}
 	// init mongo
-	err = mgomodels.SetEngine(&mgomodels.Config{
-		Host: setting.Get("mongo_url"),
-	})
-	if err != nil {
-		logrus.Error(err)
-		os.Exit(-2)
-	}
+	// err = mgomodels.SetEngine(&mgomodels.Config{
+	// 	Host: setting.Get("mongo_url"),
+	// })
+	// if err != nil {
+	// 	logrus.Error(err)
+	// 	os.Exit(-2)
+	// }
 
 	api, err := api.NewAPIBackend(models.GetEngine())
 	if err != nil {
