@@ -3,6 +3,7 @@ package main
 import (
 	"gin-xorm-frame/api"
 	"gin-xorm-frame/models"
+	"gin-xorm-frame/redis"
 	"gin-xorm-frame/setting"
 	"os"
 
@@ -30,6 +31,18 @@ func main() {
 	// 	logrus.Error(err)
 	// 	os.Exit(-2)
 	// }
+
+	// init redis
+	_, err = redis.SetEngine(&redis.Config{
+		Addr:     setting.Get("redis_addr"),
+		Password: setting.Get("redis_password"),
+		PoolSize: setting.GetInt("redis_pool_size"),
+		DB:       setting.GetInt("redis_index"),
+	})
+	if err != nil {
+		logrus.Error(err)
+		os.Exit(-3)
+	}
 
 	api, err := api.NewAPIBackend(models.GetEngine())
 	if err != nil {

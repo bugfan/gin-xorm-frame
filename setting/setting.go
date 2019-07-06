@@ -4,6 +4,7 @@ import (
 	"gin-xorm-frame/models"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -13,18 +14,22 @@ var defaults map[string]string
 func init() {
 	models.Register(new(Setting))
 	defaults = map[string]string{
-		"db_user":     "root",
-		"db_password": "",
-		"db_host":     "127.0.0.1:3306",
-		"db_name":     "scaffold",
-		"db_log":      "xorm.log",
-		"mongo_url":   "127.0.0.1",
-		"server_port": "9997",
-		"server_addr": "0.0.0.0",
-		"ssl_key":     "./ssl.key",
-		"ssl_pem":     "./ssl.pem",
-		"ishttps":     "false",
-		"jwt_secret":  "", // "" is use random string
+		"db_user":         "root",
+		"db_password":     "",
+		"db_host":         "127.0.0.1:3306",
+		"db_name":         "scaffold",
+		"db_log":          "xorm.log",
+		"mongo_url":       "127.0.0.1",
+		"redis_addr":      "127.0.0.1",
+		"redis_password":  "",
+		"redis_pool_size": "100",
+		"redis_index":     "0",
+		"server_port":     "9997",
+		"server_addr":     "0.0.0.0",
+		"ssl_key":         "./ssl.key",
+		"ssl_pem":         "./ssl.pem",
+		"ishttps":         "false",
+		"jwt_secret":      "", // "" is use random string
 	}
 }
 
@@ -58,6 +63,10 @@ func Get(key string) string {
 		return getDefault(key)
 	}
 	return s.Value
+}
+func GetInt(key string) int {
+	v, _ := strconv.Atoi(Get(key))
+	return v
 }
 func Set(key, value string) {
 	x := models.GetEngine()
