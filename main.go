@@ -2,7 +2,6 @@ package main
 
 import (
 	"gin-xorm-frame/api"
-	"gin-xorm-frame/influxdb"
 	"gin-xorm-frame/models"
 	"gin-xorm-frame/setting"
 	"os"
@@ -44,17 +43,17 @@ func main() {
 	// 	os.Exit(-3)
 	// }
 
-	influxdb.I, err = influxdb.NewClient(
-		setting.Get("influx_addr"),
-		setting.Get("influx_username"),
-		setting.Get("influx_password"),
-		setting.Get("influx_db"),
-		setting.Get("influx_precision"),
-	)
-	if err != nil {
-		logrus.Error(err)
-		os.Exit(-4)
-	}
+	// influxdb.I, err = influxdb.NewClient(
+	// 	setting.Get("influx_addr"),
+	// 	setting.Get("influx_username"),
+	// 	setting.Get("influx_password"),
+	// 	setting.Get("influx_db"),
+	// 	setting.Get("influx_precision"),
+	// )
+	// if err != nil {
+	// 	logrus.Error(err)
+	// 	os.Exit(-4)
+	// }
 
 	api, err := api.NewAPIBackend(models.GetEngine())
 	if err != nil {
