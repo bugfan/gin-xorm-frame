@@ -2,8 +2,8 @@ package main
 
 import (
 	"gin-xorm-frame/api"
+	"gin-xorm-frame/influxdb"
 	"gin-xorm-frame/models"
-	"gin-xorm-frame/redis"
 	"gin-xorm-frame/setting"
 	"os"
 
@@ -33,15 +33,27 @@ func main() {
 	// }
 
 	// init redis
-	_, err = redis.SetEngine(&redis.Config{
-		Addr:     setting.Get("redis_addr"),
-		Password: setting.Get("redis_password"),
-		PoolSize: setting.GetInt("redis_pool_size"),
-		DB:       setting.GetInt("redis_index"),
-	})
+	// _, err = redis.SetEngine(&redis.Config{
+	// 	Addr:     setting.Get("redis_addr"),
+	// 	Password: setting.Get("redis_password"),
+	// 	PoolSize: setting.GetInt("redis_pool_size"),
+	// 	DB:       setting.GetInt("redis_index"),
+	// })
+	// if err != nil {
+	// 	logrus.Error(err)
+	// 	os.Exit(-3)
+	// }
+
+	influxdb.I, err = influxdb.NewClient(
+		setting.Get("influx_addr"),
+		setting.Get("influx_username"),
+		setting.Get("influx_password"),
+		setting.Get("influx_db"),
+		setting.Get("influx_precision"),
+	)
 	if err != nil {
 		logrus.Error(err)
-		os.Exit(-3)
+		os.Exit(-4)
 	}
 
 	api, err := api.NewAPIBackend(models.GetEngine())
