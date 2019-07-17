@@ -1,0 +1,18 @@
+version: '3'
+services:
+  redis:
+    image: redis:5.0
+    container_name: redis_1
+    command: redis-server /etc/redis/redis.conf --appendonly yes
+    # restart: always
+    # networks:
+    #   net:
+    #     aliases:
+    #       - redis
+    environment:
+      - REDIS_PASSWORD=0129
+    volumes:
+      - ./data:/data
+      - ./redis.conf:/etc/redis/redis.conf:rw
+    ports:
+        - 6378:6379

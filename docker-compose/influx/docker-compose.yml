@@ -1,0 +1,17 @@
+version: "3"
+services:
+  influx:
+      image: influxdb
+      container_name: influx_1
+      # restart: always
+      # command: 
+      environment:
+        - INFLUXDB_DB=scaffold
+        - INFLUXDB_ADMIN_USER=admin
+        - INFLUXDB_ADMIN_PASSWORD=admin0219 
+        - INFLUXDB_USER=zhaoxy 
+        - INFLUXDB_USER_PASSWORD=zhaoxy0219
+      volumes:
+        - ./data/influx:/var/lib/influxdb
+      ports:
+        - 8086:8086

@@ -1,0 +1,14 @@
+version: "3"
+services:
+  mongo:
+      image: mongo:4.1.6
+      container_name: mongo_3
+      # restart: always
+      # command: 
+      # environment:
+      #   - MONGO_INITDB_ROOT_USERNAME=root
+      #   - MONGO_INITDB_ROOT_PASSWORD=123456
+      #   - ME_CONFIG_MONGODB_ADMINUSERNAME=webvpn
+      #   - ME_CONFIG_MONGODB_ADMINPASSWORD=1234567
+      ports:
+        - 27017:27017
