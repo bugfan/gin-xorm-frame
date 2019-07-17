@@ -43,7 +43,8 @@ func main() {
 	// 	os.Exit(-3)
 	// }
 
-	// influxdb.I, err = influxdb.NewClient(
+	// init influxdb
+	// err = influxdb.InitClient(
 	// 	setting.Get("influx_addr"),
 	// 	setting.Get("influx_username"),
 	// 	setting.Get("influx_password"),

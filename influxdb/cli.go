@@ -1,6 +1,7 @@
 package influxdb
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -19,6 +20,28 @@ type Client struct {
 	writer                                      client.BatchPoints
 }
 
+func InitClient(addr, username, password, dbName, precision string) error {
+	I = &Client{
+		precision: precision,
+		dbName:    dbName,
+	}
+	if I.precision == "" {
+		I.precision = "s" // 默认设置为秒
+	}
+	var err error
+	I.Session, err = client.NewHTTPClient(client.HTTPConfig{
+		Addr:     addr,
+		Username: username,
+		Password: password,
+		// Precision: precision,
+	})
+	_, err = I.QueryDB("show databases")
+	if err != nil {
+		return errors.New(fmt.Sprintf("influxdb connect error:%v", err))
+	}
+	return nil
+}
+
 func NewClient(addr, username, password, dbName, precision string) (*Client, error) {
 	c := &Client{
 		precision: precision,
@@ -34,8 +57,9 @@ func NewClient(addr, username, password, dbName, precision string) (*Client, err
 		Password: password,
 		// Precision: precision,
 	})
+	_, err = I.QueryDB("show databases")
 	if err != nil {
-		return nil, err
+		return nil, errors.New(fmt.Sprintf("influxdb connect error:%v", err))
 	}
 	return c, nil
 }
