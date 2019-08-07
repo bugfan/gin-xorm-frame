@@ -10,7 +10,7 @@
 
 ## 使用
 1. 切换的此目录
-2. go run main.go  #如果顺利可以看到下图表示启动成功
+2. go run main.go  #如果启动顺利可以看到下面打印，如果失败请检查数据库链接配置，在setting包下面
 ![avatar](./img/run-state.png)
 3. 如果需要链接其他数据库，在main.go里面把相关db链接代码注释放开即可
 4. 在api文件夹下面加入controllers文件代码 
