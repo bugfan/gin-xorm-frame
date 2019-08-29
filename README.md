@@ -26,7 +26,7 @@
 }
 ```
 登录成功之后可以看到cookie已经写入客户端(我用的是postman)
-![avatar](./img/postman2.png)
+![avatar](./img/postman.png)
 登录之后可以调用其他接口了
 ![avatar](./img/postman1.png)
 10. jwt过期时间在utils.cookie文件里设置 
