@@ -23,10 +23,17 @@ func NewAPIBackend(x *xorm.Engine) (*APIBackend, error) {
 	}
 	b.G.Use(gin.Recovery())
 	b.G.Use(gin.ErrorLogger())
+
+	// static dir
+	// b.G.StaticFile("/", "./panel/dist/index.html")
+	// b.G.Static("/static", "./panel/dist/static")
+	// b.G.StaticFile("/favicon.ico", "./panel/dist/favicon.ico")
+
 	// api
 	api := b.G.Group("/api")
 	// api.Use(setToken)
-	// api.Use(Auth())
+	Sign(api)
+	api.Use(AuthMiddleware)
 	// routes
 	b.initRoute(api)
 	return b, nil

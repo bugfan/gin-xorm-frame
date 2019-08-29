@@ -1,2 +1,3 @@
 xorm.log
 *.log
+/default_pass

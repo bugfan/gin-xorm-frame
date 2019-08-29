@@ -22,6 +22,8 @@ func main() {
 		logrus.Error(err)
 		os.Exit(-1)
 	}
+	// init a admin account
+	models.InitAdmin()
 	// init mongo
 	// err = mgomodels.SetEngine(&mgomodels.Config{
 	// 	Host: setting.Get("mongo_url"),

@@ -2,116 +2,75 @@ package api
 
 import (
 	"errors"
-	"time"
-
-	jwt "github.com/appleboy/gin-jwt"
+	"gin-xorm-frame/models"
+	"gin-xorm-frame/utils"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func Auth() gin.HandlerFunc {
+const (
+	AUTH_USERNAME = "username"
+)
 
-	authMiddleware := &jwt.GinJWTMiddleware{
-		Realm:      "code_name",        //setting.Get("code_name"),
-		Key:        []byte("test_key"), //[]byte(setting.SecretKey()),
-		Timeout:    time.Hour,
-		MaxRefresh: time.Hour * 24,
-		// Authenticator: authenticator,
-		// Authorizator: authorizator,
-		// IdentityHandler: identityHandler,
-		Unauthorized: func(c *gin.Context, code int, message string) {
-			_ = c.AbortWithError(code, errors.New(message))
-		},
-		// PayloadFunc: loginPayload,
-		// TokenLookup is a string in the form of "<source>:<name>" that is used
-		// to extract token from the request.
-		// Optional. Default value "header:Authorization".
-		// Possible values:
-		// - "header:<name>"
-		// - "query:<name>"
-		// - "cookie:<name>"
-		TokenLookup: "header:Authorization",
-		// TokenLookup: "query:token",
-		// TokenLookup: "cookie:token",
-
+func AuthMiddleware(ctx *gin.Context) {
+	_, err := utils.GetJWTDataFromCookie(ctx.Request)
+	if err != nil {
+		ctx.Writer.WriteHeader(http.StatusUnauthorized)
+		ctx.Abort()
 	}
-	RegisterGlobal("POST", "/api/sign_in", authMiddleware.LoginHandler)
-	RegisterGlobal("POST", "/api/sign_out", func(*gin.Context) {})
-	RegisterGlobal("GET", "/api/refresh_token", authMiddleware.MiddlewareFunc(), authMiddleware.RefreshHandler)
-
-	return authMiddleware.MiddlewareFunc()
+	ctx.Next()
 }
 
-type AuthBody struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+func Sign(g *gin.RouterGroup) {
+	g.POST("/sign_in", signin)
+	g.POST("/sign_out", signout)
+	g.GET("/user_info", userinfo)
 }
 
-// func authenticator(username string, password string, c *gin.Context) (string, bool) {
-// func authenticator(c *gin.Context) (interface{}, error) {
-// 	var body AuthBody
-// 	if err := c.ShouldBind(&body); err != nil {
-// 		return nil, jwt.ErrMissingLoginValues
-// 	}
+func signin(ctx *gin.Context) {
+	type admin struct {
+		Username, Password string
+	}
 
-// 	u := model.FindAdmin(body.Username)
-// 	if u == nil {
-// 		return nil, jwt.ErrFailedAuthentication
-// 	}
-// 	err := u.CheckPassword(body.Password)
-// 	if err != nil {
-// 		return nil, jwt.ErrFailedAuthentication
-// 	}
+	body := &admin{}
+	err := ctx.ShouldBind(body)
+	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, err)
+	}
+	u := models.FindAdmin(body.Username)
+	if u == nil {
+		ctx.AbortWithError(http.StatusBadRequest, errors.New("帐号密码错误"))
+	}
+	err = u.CheckPassword(body.Password)
+	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, errors.New("帐号密码错误"))
+	}
+	// todo set cookie
+	if err := utils.SetJWTDataToCookie(ctx.Writer, map[string]string{AUTH_USERNAME: u.Username}); err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+	}
+	ctx.JSON(http.StatusOK, u)
+}
 
-// 	return u, nil
-// }
+func signout(ctx *gin.Context) {
+	// todo delete cookie
+	username := CurrentName(ctx.Request)
+	utils.DeleteJWTCookie(ctx.Writer)
+	ctx.JSON(http.StatusOK, username)
+}
 
-// func loginPayload(data interface{}) jwt.MapClaims {
-// 	if v, ok := data.(*model.Admin); ok {
-// 		return jwt.MapClaims{
-// 			"id": v.ID,
-// 		}
-// 	}
-// 	return jwt.MapClaims{}
-// }
+func userinfo(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, "")
+}
 
-// func identityHandler(claims jwtgo.MapClaims) interface{} {
-// 	if id, ok := claims["id"]; ok {
-// 		i64 := int64(id.(float64))
-// 		user := new(model.Admin)
-// 		has, err := model.Get(i64, user)
-// 		if err != nil || !has {
-// 			return nil
-// 		}
-// 		return user
-// 	}
-// 	return nil
-// }
-
-// func authorizator(data interface{}, c *gin.Context) bool {
-// 	if data == nil {
-// 		return false
-// 	}
-// 	if _, ok := data.(*model.Admin); ok {
-// 		return true
-// 	}
-
-// 	return false
-// }
-
-// func currentUser(c *gin.Context) *model.Admin {
-// 	claims := jwt.ExtractClaims(c)
-// 	res := identityHandler(claims)
-// 	if u, ok := res.(*model.Admin); ok {
-// 		return u
-// 	}
-// 	return nil
-// }
-
-// func currentUserName(c *gin.Context) string {
-// 	username := "Unknown"
-// 	if user := currentUser(c); user != nil {
-// 		username = user.Username
-// 	}
-// 	return username
-// }
+func CurrentName(req *http.Request) string {
+	cookieData, err := utils.GetJWTDataFromCookie(req)
+	if err != nil {
+		return ""
+	}
+	if username, ok := cookieData[AUTH_USERNAME]; ok {
+		return username
+	}
+	return ""
+}

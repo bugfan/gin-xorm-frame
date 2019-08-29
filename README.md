@@ -13,8 +13,20 @@
 2. go run main.go  #如果启动顺利可以看到下面打印，如果失败请检查数据库链接配置，在setting包下面
 ![avatar](./img/run-state.png)
 3. 如果需要链接其他数据库，在main.go里面把相关db链接代码注释放开即可
-4. 在api文件夹下面加入controllers文件代码 
+4. 在api文件夹下面加入controllers代码 
 5. 在models文件下面加入models文件
 6. 相关的工具类和方法在utils包下面添加
-
-## 这个框架充分利用了golang的反射 
+7. 程序启动后在未登录情况下，调用接口一律报401。【sign_in(POST请求)，sign_out(POST请求),user_info(Get请求)】除外
+8. 启动后初始化账号密码写入当前目录 `default_pass` 文件中,如果想增加管理员账号，在接口中调用models.Admin下面的api
+9. 需要先调用 `xxxxx/api/sign_in` 进行登录,参数如下:
+```
+{
+	"Username":"admin",
+	"Password":"ladfjianfalen"
+}
+```
+登录成功之后可以看到cookie已经写入客户端(我用的是postman)
+![avatar](./img/postman2.png)
+登录之后可以调用其他接口了
+![avatar](./img/postman1.png)
+10. jwt过期时间在utils.cookie文件里设置 
