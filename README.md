@@ -1,4 +1,4 @@
-## golang web开发脚手架,集成了redis,mongo,influxdb数据库相关api
+## golang web开发脚手架,集成了redis,mongo,influxdb数据库相关api(这个框架超级好用,强烈推荐)
 
 ### 介绍
 1. 采用　gin + xorm 自动生成增删改查api，可重写增删改查api函数　
